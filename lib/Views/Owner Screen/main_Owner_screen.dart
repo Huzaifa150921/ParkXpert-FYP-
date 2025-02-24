@@ -1,30 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart'; // Import this for SystemUiOverlayStyle
+import 'package:parkxpert/Views/Widgets/Owner%20Screen/drawer/owner_drawer.dart';
 import 'package:parkxpert/Views/Widgets/extra%20features/double_tap_exit_feature.dart';
 import 'package:parkxpert/Views/Widgets/user_screens/drawer/user_drawer.dart';
-import 'package:parkxpert/Views/user_screen/map_screen.dart';
-import 'package:water_drop_nav_bar/water_drop_nav_bar.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
-
-  @override
-  _MainScreenState createState() => _MainScreenState();
-}
-
-class _MainScreenState extends State<MainScreen> {
+class MainOwnerScreen extends StatelessWidget {
+  MainOwnerScreen({super.key});
   final Color navigationBarColor = Colors.black;
-  int selectedIndex = 1;
-  late PageController pageController;
-
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  @override
-  void initState() {
-    super.initState();
-    pageController = PageController(initialPage: selectedIndex);
-  }
-
   @override
   Widget build(BuildContext context) {
     double screenheight = MediaQuery.of(context).size.height;
@@ -47,27 +30,9 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
           extendBodyBehindAppBar: true,
-          drawer: const UserDrawer(),
+          drawer: OwnerDrawer(),
           body: Stack(
             children: [
-              PageView(
-                physics: const NeverScrollableScrollPhysics(),
-                controller: pageController,
-                children: <Widget>[
-                  Container(
-                    alignment: Alignment.center,
-                    child: Icon(Icons.favorite_rounded,
-                        size: 56, color: Colors.red[400]),
-                  ),
-                  Container(
-                    child: MapScreen(),
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    child: Icon(Icons.save, size: 56, color: Colors.blue[400]),
-                  ),
-                ],
-              ),
               Positioned(
                 top: screenheight * 0.07,
                 left: screenwidth * 0.05,
@@ -92,29 +57,6 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 ),
               ),
-            ],
-          ),
-          bottomNavigationBar: WaterDropNavBar(
-            backgroundColor: navigationBarColor,
-            waterDropColor: Colors.blue,
-            onItemSelected: (int index) {
-              setState(() {
-                selectedIndex = index;
-              });
-              pageController.animateToPage(selectedIndex,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeOutQuad);
-            },
-            selectedIndex: selectedIndex,
-            barItems: <BarItem>[
-              BarItem(
-                  filledIcon: Icons.folder_special,
-                  outlinedIcon: Icons.folder_special_outlined),
-              BarItem(
-                  filledIcon: Icons.pin_drop,
-                  outlinedIcon: Icons.pin_drop_outlined),
-              BarItem(
-                  filledIcon: Icons.save, outlinedIcon: Icons.save_outlined),
             ],
           ),
         ),

@@ -8,6 +8,8 @@ class TextFeildInput extends StatefulWidget {
     required this.icon,
     this.hide = false,
     required this.inputtpe,
+    this.controller,
+    this.validator,
   });
 
   final String labeltext;
@@ -15,6 +17,8 @@ class TextFeildInput extends StatefulWidget {
   final IconData icon;
   final bool? hide;
   final TextInputType inputtpe;
+  final TextEditingController? controller;
+  final String? Function(String?)? validator;
 
   @override
   _TextFeildInputState createState() => _TextFeildInputState();
@@ -36,9 +40,11 @@ class _TextFeildInputState extends State<TextFeildInput> {
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-      child: TextField(
+      child: TextFormField(
+        controller: widget.controller,
         obscureText: _isPasswordHidden,
         keyboardType: widget.inputtpe,
+        validator: widget.validator,
         decoration: InputDecoration(
           labelText: widget.labeltext,
           hintText: widget.hinttext,
