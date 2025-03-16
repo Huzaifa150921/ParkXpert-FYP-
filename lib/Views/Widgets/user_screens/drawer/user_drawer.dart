@@ -1,22 +1,14 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:parkxpert/Views/Owner%20Screen/main_Owner_screen.dart';
-import 'package:parkxpert/Views/Widgets/user_screens/drawe_screens/Help_screen.dart';
-import 'package:parkxpert/Views/Widgets/user_screens/drawe_screens/Notificatios_screen.dart';
-import 'package:parkxpert/Views/Widgets/user_screens/drawe_screens/Rateus_screen.dart';
-import 'package:parkxpert/Views/Widgets/user_screens/drawe_screens/Support_screen.dart';
-import 'package:parkxpert/Views/Widgets/user_screens/drawe_screens/profile_screem.dart';
-import 'package:parkxpert/Views/Widgets/user_screens/drawe_screens/settings_screen.dart';
-import 'package:parkxpert/Views/Widgets/user_screens/drawe_screens/user_bookings_screen.dart';
+import 'package:parkxpert/Controller/UserController/user_controller.dart';
 import 'package:parkxpert/Views/Widgets/user_screens/drawer/user_drawer_button.dart';
+import 'package:parkxpert/res/routes/route_name.dart';
 
 class UserDrawer extends StatelessWidget {
-  const UserDrawer({super.key});
-
+  UserDrawer({super.key});
+  final UserController userController = Get.find<UserController>();
   @override
   Widget build(BuildContext context) {
     double screenwidth = MediaQuery.of(context).size.width;
@@ -32,6 +24,7 @@ class UserDrawer extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.4),
             blurRadius: 8,
             spreadRadius: 2,
@@ -40,7 +33,7 @@ class UserDrawer extends StatelessWidget {
         ],
       ),
       child: GFDrawer(
-        color: Colors.black,
+        color: const Color.fromARGB(255, 24, 24, 24),
         child: Column(
           children: [
             Padding(
@@ -48,27 +41,34 @@ class UserDrawer extends StatelessWidget {
                 top: screenheight * 0.10,
                 left: screenwidth * 0.10,
               ),
-              child: Row(
-                children: [
-                  GFAvatar(
-                    size: 40,
-                    backgroundImage:
-                        AssetImage("assests/images/default_profile_pic.jfif"),
-                    backgroundColor: Colors.grey[800],
-                  ),
-                  SizedBox(
-                    width: screenwidth * 0.04,
-                  ),
-                  Text(
-                    "username",
-                    style: GoogleFonts.poppins(
+              child: Obx(() {
+                final user = userController.currentUser.value;
+                if (user == null) {
+                  return CircularProgressIndicator();
+                }
+                return Row(
+                  children: [
+                    GFAvatar(
+                      size: 40,
+                      backgroundImage: AssetImage(
+                        user.profilePic ??
+                            "assets/images/default_profile_pic.jfif",
+                      ),
+                      backgroundColor: Colors.grey[800],
+                    ),
+                    SizedBox(width: screenwidth * 0.08),
+                    Text(
+                      user.name ?? "Guest",
+                      style: GoogleFonts.poppins(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
                         color: Colors.white,
-                        letterSpacing: 1),
-                  ),
-                ],
-              ),
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ],
+                );
+              }),
             ),
             SizedBox(
               height: screenheight * 0.03,
@@ -85,18 +85,7 @@ class UserDrawer extends StatelessWidget {
                     text: "Profile",
                     icon: Icons.person_outline,
                     func: () {
-                      Timer(Duration(milliseconds: 500), () {
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.bottomToTop,
-                            duration: Duration(milliseconds: 900),
-                            curve: Curves.easeInOut,
-                            child: ProfileScreem(),
-                            reverseDuration: Duration(milliseconds: 500),
-                          ),
-                        );
-                      });
+                      Get.toNamed(RouteName.profileScreen);
                     },
                   ),
                   SizedBox(
@@ -106,18 +95,7 @@ class UserDrawer extends StatelessWidget {
                     text: "Bookings",
                     icon: Icons.history_outlined,
                     func: () {
-                      Timer(Duration(milliseconds: 500), () {
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.bottomToTop,
-                            duration: Duration(milliseconds: 900),
-                            curve: Curves.easeInOut,
-                            child: UserBookingsScreen(),
-                            reverseDuration: Duration(milliseconds: 500),
-                          ),
-                        );
-                      });
+                      Get.toNamed(RouteName.bookingScreen);
                     },
                   ),
                   SizedBox(
@@ -127,18 +105,7 @@ class UserDrawer extends StatelessWidget {
                     text: "Notifications",
                     icon: Icons.notifications_outlined,
                     func: () {
-                      Timer(Duration(milliseconds: 500), () {
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.bottomToTop,
-                            duration: Duration(milliseconds: 900),
-                            curve: Curves.easeInOut,
-                            child: NotificatiosScreen(),
-                            reverseDuration: Duration(milliseconds: 500),
-                          ),
-                        );
-                      });
+                      Get.toNamed(RouteName.notificationScreen);
                     },
                   ),
                   SizedBox(
@@ -148,18 +115,7 @@ class UserDrawer extends StatelessWidget {
                     text: "Settings",
                     icon: Icons.settings_outlined,
                     func: () {
-                      Timer(Duration(milliseconds: 500), () {
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.bottomToTop,
-                            duration: Duration(milliseconds: 900),
-                            curve: Curves.easeInOut,
-                            child: SettingsScreen(),
-                            reverseDuration: Duration(milliseconds: 500),
-                          ),
-                        );
-                      });
+                      Get.toNamed(RouteName.settingScreen);
                     },
                   ),
                   SizedBox(
@@ -169,18 +125,7 @@ class UserDrawer extends StatelessWidget {
                     text: "Help",
                     icon: Icons.help_outline,
                     func: () {
-                      Timer(Duration(milliseconds: 500), () {
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.bottomToTop,
-                            duration: Duration(milliseconds: 900),
-                            curve: Curves.easeInOut,
-                            child: HelpScreen(),
-                            reverseDuration: Duration(milliseconds: 500),
-                          ),
-                        );
-                      });
+                      Get.toNamed(RouteName.helpScreen);
                     },
                   ),
                   SizedBox(
@@ -190,18 +135,7 @@ class UserDrawer extends StatelessWidget {
                       text: "Support",
                       icon: Icons.support_outlined,
                       func: () {
-                        Timer(Duration(milliseconds: 500), () {
-                          Navigator.push(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.bottomToTop,
-                              duration: Duration(milliseconds: 900),
-                              curve: Curves.easeInOut,
-                              child: SupportScreen(),
-                              reverseDuration: Duration(milliseconds: 500),
-                            ),
-                          );
-                        });
+                        Get.toNamed(RouteName.supportScreen);
                       }),
                   SizedBox(
                     height: screenheight * 0.02,
@@ -210,18 +144,7 @@ class UserDrawer extends StatelessWidget {
                     text: "Rate Us",
                     icon: Icons.rate_review_outlined,
                     func: () {
-                      Timer(Duration(milliseconds: 500), () {
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.bottomToTop,
-                            duration: Duration(milliseconds: 900),
-                            curve: Curves.easeInOut,
-                            child: RateusScreen(),
-                            reverseDuration: Duration(milliseconds: 500),
-                          ),
-                        );
-                      });
+                      Get.toNamed(RouteName.rateusScreen);
                     },
                   ),
                 ],
@@ -233,28 +156,16 @@ class UserDrawer extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(
                   bottom: screenheight * 0.1, top: screenheight * 0.02),
-              child: Container(
+              child: SizedBox(
                 width: screenwidth * 0.7,
                 child: GFButton(
                   size: 50,
                   onPressed: () {
-                    Timer(Duration(milliseconds: 800), () {
-                      Navigator.push(
-                        context,
-                        PageTransition(
-                          type: PageTransitionType.rotate,
-                          alignment: Alignment.center,
-                          duration: Duration(milliseconds: 900),
-                          curve: Curves.easeInOutBack,
-                          child: MainOwnerScreen(),
-                          reverseDuration: Duration(milliseconds: 500),
-                        ),
-                      );
-                    });
+                    Get.toNamed(RouteName.ownerDesitionScreen);
                   },
                   text: "Owner mode",
                   color: Colors.blue,
-                  textStyle: TextStyle(
+                  textStyle: GoogleFonts.nobile(
                       fontSize: 20,
                       fontWeight: FontWeight.w400,
                       color: Colors.white,

@@ -1,29 +1,37 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:parkxpert/Views/Auth/Login.dart';
+import 'package:parkxpert/Controller/UserController/user_controller.dart';
+import 'package:parkxpert/Interface/Auth/signup_service.dart';
 import 'package:parkxpert/Views/Widgets/textfeilds/account_asker.dart';
 import 'package:parkxpert/Views/Widgets/textfeilds/text_feild_input.dart';
+import 'package:parkxpert/res/routes/route_name.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
-class Signup extends StatefulWidget {
-  const Signup({super.key});
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _SignupState createState() => _SignupState();
 }
 
-class _SignupState extends State<Signup> {
+final signupService = Get.put(SignupService());
+
+class _SignupState extends State<SignupScreen> {
   final RoundedLoadingButtonController controller =
       RoundedLoadingButtonController();
+
+  final UserController userController = Get.find<UserController>();
   final _formKey = GlobalKey<FormState>();
 
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+  final _nameController = signupService.nameController.value;
+  final _emailController = signupService.emailController.value;
+  final _phoneController = signupService.phoneNumberController.value;
+  final _passwordController = signupService.passwordController.value;
+  final _confirmPasswordController =
+      signupService.confirmPasswordController.value;
 
   bool _isEmailValid = true;
   bool _isPhoneValid = true;
@@ -56,7 +64,7 @@ class _SignupState extends State<Signup> {
   }
 
   void _validatePhone() {
-    String pattern = r'^[0-9]{10}$';
+    String pattern = r'^[0-9]{11}$';
     RegExp regExp = RegExp(pattern);
     setState(() {
       _isPhoneValid = regExp.hasMatch(_phoneController.text);
@@ -84,6 +92,14 @@ class _SignupState extends State<Signup> {
           _passwordController.text == _confirmPasswordController.text;
       confirmPasswordError = _doPasswordsMatch ? '' : 'Passwords do not match.';
     });
+  }
+
+  void resetFields() {
+    _nameController.clear();
+    _emailController.clear();
+    _phoneController.clear();
+    _passwordController.clear();
+    _confirmPasswordController.clear();
   }
 
   @override
@@ -137,11 +153,10 @@ class _SignupState extends State<Signup> {
         child: Container(
           height: screenHeight,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.deepPurple, Colors.black],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            image: DecorationImage(
+                image: AssetImage("assets/images/auth.jpg"),
+                fit: BoxFit.cover,
+                filterQuality: FilterQuality.high),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -157,7 +172,7 @@ class _SignupState extends State<Signup> {
                   ).createShader(bounds),
                   child: Text(
                     "Sign Up",
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.nobile(
                       fontSize: screenWidth * 0.08,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
@@ -302,19 +317,12 @@ class _SignupState extends State<Signup> {
                       ),
                     SizedBox(height: screenHeight * 0.01),
 
-                    // Account Asker (Login Link)
                     AccountAsker(
                       maintet: "Already have an account? ",
                       subtext: "Login",
                       func: () {
-                        Navigator.pushReplacement(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.fade,
-                            duration: Durations.medium3,
-                            child: Login(),
-                          ),
-                        );
+                        Get.offNamed(RouteName.login);
+                        resetFields();
                       },
                     ),
 
@@ -328,7 +336,7 @@ class _SignupState extends State<Signup> {
                         tag: "auth",
                         child: RoundedLoadingButton(
                           controller: controller,
-                          onPressed: () {
+                          onPressed: () async {
                             if (_nameController.text.isEmpty) {
                               setState(() {
                                 nameError = 'Name cannot be empty.';
@@ -364,16 +372,27 @@ class _SignupState extends State<Signup> {
                                 _isPhoneValid &&
                                 _isPasswordValid &&
                                 _doPasswordsMatch) {
-                              Timer(Duration(seconds: 3), () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  PageTransition(
-                                    type: PageTransitionType.rightToLeft,
-                                    child: Login(),
-                                  ),
-                                );
-                                controller.success();
-                              });
+                              controller.start();
+
+                              bool success = await userController.registerUser(
+                                _nameController.text.trim(),
+                                _emailController.text.trim(),
+                                _passwordController.text.trim(),
+                                _phoneController.text.trim(),
+                                "user",
+                              );
+
+                              if (success) {
+                                Future.delayed(Duration(seconds: 3), () {
+                                  Get.offNamed(RouteName.login);
+                                });
+                                resetFields();
+                              } else {
+                                controller.error();
+                                Timer(Duration(seconds: 3), () {
+                                  controller.reset();
+                                });
+                              }
                             } else {
                               controller.error();
                               Timer(Duration(seconds: 3), () {
@@ -381,14 +400,6 @@ class _SignupState extends State<Signup> {
                               });
                             }
                           },
-                          child: Text(
-                            'Create Account',
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.05,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
                           color: Colors.blueAccent,
                           width: screenWidth * 0.6,
                           height: screenHeight * 0.07,
@@ -396,6 +407,14 @@ class _SignupState extends State<Signup> {
                           successColor: Colors.green,
                           errorColor: Colors.red,
                           animateOnTap: true,
+                          child: Text(
+                            'Create Account',
+                            style: GoogleFonts.nobile(
+                              fontSize: screenWidth * 0.05,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     ),

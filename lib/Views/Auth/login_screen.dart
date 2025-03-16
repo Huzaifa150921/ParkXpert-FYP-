@@ -1,30 +1,40 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:parkxpert/Views/Auth/Signup.dart';
+import 'package:parkxpert/Controller/UserController/user_controller.dart';
+import 'package:parkxpert/Interface/Auth/login_service.dart';
 import 'package:parkxpert/Views/Widgets/textfeilds/account_asker.dart';
 import 'package:parkxpert/Views/Widgets/textfeilds/text_feild_input.dart';
-import 'package:parkxpert/Views/user_screen/main_screen.dart';
+import 'package:parkxpert/res/routes/route_name.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _LoginState createState() => _LoginState();
 }
 
-class _LoginState extends State<Login> {
+final loginService = Get.put(LoginService());
+
+class _LoginState extends State<LoginScreen> {
+  final UserController userController = Get.find<UserController>();
   final RoundedLoadingButtonController controller =
       RoundedLoadingButtonController();
   final _formKey = GlobalKey<FormState>();
 
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _emailController = loginService.emailController.value;
+  final _passwordController = loginService.passwordController.value;
 
   String emailError = '';
   String passwordError = '';
+
+  void resetFields() {
+    _emailController.clear();
+    _passwordController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +46,10 @@ class _LoginState extends State<Login> {
         child: Container(
           height: screenHeight,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.deepPurple, Colors.black],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            image: DecorationImage(
+                image: AssetImage("assets/images/auth.jpg"),
+                fit: BoxFit.cover,
+                filterQuality: FilterQuality.high),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -56,7 +65,7 @@ class _LoginState extends State<Login> {
                   ).createShader(bounds),
                   child: Text(
                     "Login",
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.nobile(
                       fontSize: screenWidth * 0.08,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
@@ -92,7 +101,7 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                       ),
-                    SizedBox(height: screenHeight * 0.01),
+                    SizedBox(height: screenHeight * 0.02),
                     TextFeildInput(
                       controller: _passwordController,
                       labeltext: "Password",
@@ -122,14 +131,7 @@ class _LoginState extends State<Login> {
                       maintet: "Don't have an account? ",
                       subtext: "Sign up",
                       func: () {
-                        Navigator.pushReplacement(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.fade,
-                            duration: Durations.medium3,
-                            child: Signup(),
-                          ),
-                        );
+                        Get.offNamed(RouteName.signup);
                       },
                     ),
                     Padding(
@@ -141,7 +143,7 @@ class _LoginState extends State<Login> {
                         tag: "auth",
                         child: RoundedLoadingButton(
                           controller: controller,
-                          onPressed: () {
+                          onPressed: () async {
                             if (_emailController.text.isEmpty) {
                               setState(() {
                                 emailError = 'Email cannot be empty.';
@@ -164,16 +166,25 @@ class _LoginState extends State<Login> {
 
                             if (_emailController.text.isNotEmpty &&
                                 _passwordController.text.isNotEmpty) {
-                              Timer(Duration(seconds: 3), () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  PageTransition(
-                                    type: PageTransitionType.rightToLeft,
-                                    child: MainScreen(),
-                                  ),
-                                );
-                                controller.success();
-                              });
+                              controller.start();
+
+                              bool isLoggedIn = await userController.loginUser(
+                                _emailController.text.trim(),
+                                _passwordController.text.trim(),
+                              );
+
+                              if (isLoggedIn) {
+                                Future.delayed(Duration(seconds: 3), () {
+                                  Get.offNamed(RouteName.userScreen);
+                                  resetFields();
+                                });
+                              } else {
+                                controller.error();
+                                Timer(Duration(seconds: 3), () {
+                                  controller.reset();
+                                  resetFields();
+                                });
+                              }
                             } else {
                               controller.error();
                               Timer(Duration(seconds: 3), () {
@@ -181,14 +192,6 @@ class _LoginState extends State<Login> {
                               });
                             }
                           },
-                          child: Text(
-                            'Login',
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.05,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
                           color: Colors.blueAccent,
                           width: screenWidth * 0.4,
                           height: screenHeight * 0.07,
@@ -196,6 +199,14 @@ class _LoginState extends State<Login> {
                           successColor: Colors.green,
                           errorColor: Colors.red,
                           animateOnTap: true,
+                          child: Text(
+                            'Login',
+                            style: GoogleFonts.nobile(
+                              fontSize: screenWidth * 0.05,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     ),

@@ -18,7 +18,7 @@ class UserDrawerButton extends StatelessWidget {
       fullWidthButton: true,
       shape: GFButtonShape.square,
       size: 60,
-      color: Colors.black,
+      color: const Color.fromARGB(255, 24, 24, 24),
       hoverColor: Colors.blue[700],
       splashColor: Colors.blue[800],
       child: Row(

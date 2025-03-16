@@ -1,12 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:page_transition/page_transition.dart';
-
 import 'package:parkxpert/Views/Widgets/user_screens/drawer/user_drawer_button.dart';
-import 'package:parkxpert/Views/user_screen/main_screen.dart';
+import 'package:parkxpert/res/routes/route_name.dart';
 
 class OwnerDrawer extends StatelessWidget {
   const OwnerDrawer({super.key});
@@ -26,6 +23,7 @@ class OwnerDrawer extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.4),
             blurRadius: 8,
             spreadRadius: 2,
@@ -34,7 +32,7 @@ class OwnerDrawer extends StatelessWidget {
         ],
       ),
       child: GFDrawer(
-        color: Colors.black,
+        color: const Color.fromARGB(255, 24, 24, 24),
         child: Column(
           children: [
             Padding(
@@ -47,15 +45,14 @@ class OwnerDrawer extends StatelessWidget {
                   GFAvatar(
                     size: 40,
                     backgroundImage:
-                        AssetImage("assests/images/default_profile_pic.jfif"),
-                    backgroundColor: Colors.grey[800],
+                        AssetImage("assets/images/default_profile_pic.jfif"),
                   ),
                   SizedBox(
-                    width: screenwidth * 0.04,
+                    width: screenwidth * 0.08,
                   ),
                   Text(
                     "username",
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.nobile(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
                         color: Colors.white,
@@ -79,57 +76,37 @@ class OwnerDrawer extends StatelessWidget {
                     text: "Profile",
                     icon: Icons.person_outline,
                     func: () {
-                      Timer(Duration(milliseconds: 500), () {
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.bottomToTop,
-                            duration: Duration(milliseconds: 900),
-                            curve: Curves.easeInOut,
-                            // child: ProfileScreem(),
-                          ),
-                        );
-                      });
+                      // Get.toNamed(RouteName.profileScreen);
                     },
                   ),
                   SizedBox(
                     height: screenheight * 0.02,
                   ),
                   UserDrawerButton(
-                    text: "Bookings",
-                    icon: Icons.history_outlined,
+                    text: "My Parkings",
+                    icon: Icons.local_parking_outlined,
                     func: () {
-                      Timer(Duration(milliseconds: 500), () {
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.bottomToTop,
-                            duration: Duration(milliseconds: 900),
-                            curve: Curves.easeInOut,
-                            // child: UserBookingsScreen(),
-                          ),
-                        );
-                      });
+                      // Get.toNamed(RouteName.profileScreen);
                     },
                   ),
                   SizedBox(
                     height: screenheight * 0.02,
                   ),
                   UserDrawerButton(
-                    text: "Notifications",
-                    icon: Icons.notifications_outlined,
+                    text: "Reviews",
+                    icon: Icons.reviews_outlined,
                     func: () {
-                      Timer(Duration(milliseconds: 500), () {
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.bottomToTop,
-                            duration: Duration(milliseconds: 900),
-                            curve: Curves.easeInOut,
-                            // child: NotificatiosScreen(),
-                          ),
-                        );
-                      });
+                      // Get.toNamed(RouteName.profileScreen);
+                    },
+                  ),
+                  SizedBox(
+                    height: screenheight * 0.02,
+                  ),
+                  UserDrawerButton(
+                    text: "Ratings",
+                    icon: Icons.star_border_outlined,
+                    func: () {
+                      // Get.toNamed(RouteName.profileScreen);
                     },
                   ),
                   SizedBox(
@@ -139,17 +116,17 @@ class OwnerDrawer extends StatelessWidget {
                     text: "Settings",
                     icon: Icons.settings_outlined,
                     func: () {
-                      Timer(Duration(milliseconds: 500), () {
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.bottomToTop,
-                            duration: Duration(milliseconds: 900),
-                            curve: Curves.easeInOut,
-                            // child: SettingsScreen(),
-                          ),
-                        );
-                      });
+                      // Get.toNamed(RouteName.profileScreen);
+                    },
+                  ),
+                  SizedBox(
+                    height: screenheight * 0.02,
+                  ),
+                  UserDrawerButton(
+                    text: "Register Parking",
+                    icon: Icons.app_registration_outlined,
+                    func: () {
+                      // Get.toNamed(RouteName.profileScreen);
                     },
                   ),
                   SizedBox(
@@ -159,38 +136,19 @@ class OwnerDrawer extends StatelessWidget {
                     text: "Help",
                     icon: Icons.help_outline,
                     func: () {
-                      Timer(Duration(milliseconds: 500), () {
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.bottomToTop,
-                            duration: Duration(milliseconds: 900),
-                            curve: Curves.easeInOut,
-                            // child: HelpScreen(),
-                          ),
-                        );
-                      });
+                      // Get.toNamed(RouteName.profileScreen);
                     },
                   ),
                   SizedBox(
                     height: screenheight * 0.02,
                   ),
                   UserDrawerButton(
-                      text: "Support",
-                      icon: Icons.support_outlined,
-                      func: () {
-                        Timer(Duration(milliseconds: 500), () {
-                          Navigator.push(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.bottomToTop,
-                              duration: Duration(milliseconds: 900),
-                              curve: Curves.easeInOut,
-                              // child: SupportScreen(),
-                            ),
-                          );
-                        });
-                      }),
+                    text: "Support",
+                    icon: Icons.support_outlined,
+                    func: () {
+                      // Get.toNamed(RouteName.profileScreen);
+                    },
+                  ),
                   SizedBox(
                     height: screenheight * 0.02,
                   ),
@@ -198,17 +156,7 @@ class OwnerDrawer extends StatelessWidget {
                     text: "Rate Us",
                     icon: Icons.rate_review_outlined,
                     func: () {
-                      Timer(Duration(milliseconds: 500), () {
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.bottomToTop,
-                            duration: Duration(milliseconds: 900),
-                            curve: Curves.easeInOut,
-                            // child: RateusScreen(),
-                          ),
-                        );
-                      });
+                      // Get.toNamed(RouteName.profileScreen);
                     },
                   ),
                 ],
@@ -220,23 +168,12 @@ class OwnerDrawer extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(
                   bottom: screenheight * 0.1, top: screenheight * 0.02),
-              child: Container(
+              child: SizedBox(
                 width: screenwidth * 0.7,
                 child: GFButton(
                   size: 50,
                   onPressed: () {
-                    Timer(Duration(milliseconds: 800), () {
-                      Navigator.push(
-                        context,
-                        PageTransition(
-                          type: PageTransitionType.rotate,
-                          alignment: Alignment.center,
-                          duration: Duration(milliseconds: 900),
-                          curve: Curves.easeInOutBack,
-                          child: MainScreen(),
-                        ),
-                      );
-                    });
+                    Get.toNamed(RouteName.userScreen);
                   },
                   text: "User mode",
                   color: Colors.blue,

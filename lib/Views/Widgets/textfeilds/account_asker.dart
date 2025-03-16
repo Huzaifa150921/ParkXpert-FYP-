@@ -24,7 +24,7 @@ class AccountAsker extends StatelessWidget {
         children: [
           Text(
             maintet,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.nobile(
               fontSize: screenWidth * 0.035,
               fontWeight: FontWeight.w600,
               color: Colors.grey.shade400,
@@ -36,7 +36,7 @@ class AccountAsker extends StatelessWidget {
             onTap: func,
             child: Text(
               subtext,
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.nobile(
                 fontSize: screenWidth * 0.035,
                 fontWeight: FontWeight.w600,
                 color: Colors.blueAccent,

@@ -1,8 +1,18 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:parkxpert/Views/Intro%20Screen/intro.dart';
-import 'package:parkxpert/Views/user_screen/main_screen.dart';
+import 'package:get/get.dart';
+import 'package:parkxpert/Controller/UserController/user_controller.dart';
+import 'package:parkxpert/res/getxLocalization/languages.dart';
+import 'package:parkxpert/res/routes/route_name.dart';
+import 'package:parkxpert/res/routes/routes.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  Get.put(UserController());
   runApp(const MyApp());
 }
 
@@ -11,14 +21,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Park Xpert',
+      translations: Languages(),
+      locale: Locale('en', 'US'),
+      fallbackLocale: Locale('en', 'US'),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+      getPages: Approutes.appRoutes(),
       debugShowCheckedModeBanner: false,
-      home: const Intro(),
+      initialRoute: RouteName.splashScreen,
     );
   }
 }

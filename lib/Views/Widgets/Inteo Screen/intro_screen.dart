@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:getwidget/getwidget.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:parkxpert/Views/Auth/Login.dart';
+import 'package:get/get.dart';
+import 'package:parkxpert/res/routes/route_name.dart';
 
 class GFIntroScreenWidget extends StatefulWidget {
   const GFIntroScreenWidget({super.key});
@@ -114,14 +113,7 @@ class GFIntroScreenWidgetState extends State<GFIntroScreenWidget> {
               right: screenWidth * 0.75,
               child: TextButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.leftToRight,
-                      child: Login(),
-                      duration: const Duration(milliseconds: 1000),
-                    ),
-                  );
+                  Get.offNamed(RouteName.login);
                 },
                 child: const Text(
                   'Skip >',
@@ -138,14 +130,7 @@ class GFIntroScreenWidgetState extends State<GFIntroScreenWidget> {
               bottom: screenHeight * 0.09,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.rightToLeft,
-                      child: Login(),
-                      duration: const Duration(milliseconds: 1000),
-                    ),
-                  );
+                  Get.offNamed(RouteName.login);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.greenAccent,
@@ -153,11 +138,13 @@ class GFIntroScreenWidgetState extends State<GFIntroScreenWidget> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: const Text('Get Started',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2)),
+                child: const Text(
+                  'Get Started',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2),
+                ),
               ),
             ),
         ],

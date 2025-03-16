@@ -6,7 +6,7 @@ class RateusScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenheight = MediaQuery.of(context).size.height;
+    // double screenheight = MediaQuery.of(context).size.height;
     double screenwidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
@@ -16,7 +16,7 @@ class RateusScreen extends StatelessWidget {
           padding: EdgeInsets.only(left: screenwidth * 0.20),
           child: Text(
             "Rate Us",
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.nobile(
                 fontSize: 22,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 1,

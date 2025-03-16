@@ -10,6 +10,7 @@ class TextFeildInput extends StatefulWidget {
     required this.inputtpe,
     this.controller,
     this.validator,
+    this.onChanged,
   });
 
   final String labeltext;
@@ -19,8 +20,10 @@ class TextFeildInput extends StatefulWidget {
   final TextInputType inputtpe;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
+  final Function(String)? onChanged;
 
   @override
+  // ignore: library_private_types_in_public_api
   _TextFeildInputState createState() => _TextFeildInputState();
 }
 
@@ -45,6 +48,7 @@ class _TextFeildInputState extends State<TextFeildInput> {
         obscureText: _isPasswordHidden,
         keyboardType: widget.inputtpe,
         validator: widget.validator,
+        onChanged: widget.onChanged,
         decoration: InputDecoration(
           labelText: widget.labeltext,
           hintText: widget.hinttext,

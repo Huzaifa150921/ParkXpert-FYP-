@@ -54,8 +54,21 @@ dependencies:
   google_maps_flutter: ^2.10.0
   double_tap_exit: ^0.0.11
   double_tap_to_exit: ^1.0.2
-  flutter_map: ^8.0.0
   latlong2: ^0.9.1
+  firebase_core: ^3.11.0
+  firebase_auth: ^5.4.2
+  cloud_firestore: ^5.6.4
+  geolocator: ^13.0.2
+  get: ^4.7.2
+  video_player: ^2.9.3
+  shared_preferences: ^2.5.2
+  image_picker: ^1.1.2
+  animated_confirm_dialog: ^1.0.2
+  firebase_storage: ^12.4.4
+  permission_handler: ^11.4.0
+  flutter_map: ^8.1.0
+  awesome_dialog: ^3.2.1
+  geocoding: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -80,7 +93,10 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assests/images/default_profile_pic.jfif
+    - assets/images/default_profile_pic.jfif
+    - assets/images/Nodata.avif
+    - assets/images/auth.jpg
+    - assets/images/splash.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

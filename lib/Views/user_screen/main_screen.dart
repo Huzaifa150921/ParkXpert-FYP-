@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:parkxpert/Views/Widgets/ResposeCodeWidgets/no_data_found.dart';
 import 'package:parkxpert/Views/Widgets/extra%20features/double_tap_exit_feature.dart';
 import 'package:parkxpert/Views/Widgets/user_screens/drawer/user_drawer.dart';
 import 'package:parkxpert/Views/user_screen/map_screen.dart';
@@ -9,6 +10,7 @@ class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _MainScreenState createState() => _MainScreenState();
 }
 
@@ -30,6 +32,8 @@ class _MainScreenState extends State<MainScreen> {
     double screenheight = MediaQuery.of(context).size.height;
     double screenwidth = MediaQuery.of(context).size.width;
     return DoubleTapExitFeature(
+      bgColor: Colors.white,
+      textColor: Colors.black,
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(
           systemNavigationBarColor: navigationBarColor,
@@ -38,7 +42,7 @@ class _MainScreenState extends State<MainScreen> {
         child: Scaffold(
           key: _scaffoldKey,
           appBar: PreferredSize(
-            preferredSize: Size.fromHeight(screenheight * 0.01),
+            preferredSize: Size.fromHeight(screenheight * 0.0001),
             child: AppBar(
               centerTitle: true,
               backgroundColor: const Color.fromARGB(255, 0, 0, 0),
@@ -47,24 +51,21 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
           extendBodyBehindAppBar: true,
-          drawer: const UserDrawer(),
+          drawer: UserDrawer(),
           body: Stack(
             children: [
               PageView(
                 physics: const NeverScrollableScrollPhysics(),
                 controller: pageController,
                 children: <Widget>[
-                  Container(
-                    alignment: Alignment.center,
-                    child: Icon(Icons.favorite_rounded,
-                        size: 56, color: Colors.red[400]),
+                  SizedBox(
+                    child: Nodatafound(),
                   ),
-                  Container(
+                  SizedBox(
                     child: MapScreen(),
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    child: Icon(Icons.save, size: 56, color: Colors.blue[400]),
+                  SizedBox(
+                    child: Nodatafound(),
                   ),
                 ],
               ),
@@ -80,6 +81,7 @@ class _MainScreenState extends State<MainScreen> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
+                          // ignore: deprecated_member_use
                           color: Colors.black.withOpacity(0.3),
                           blurRadius: 6,
                           spreadRadius: 2,
