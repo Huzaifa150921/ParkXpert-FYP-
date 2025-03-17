@@ -38,7 +38,6 @@ class MapControllerX extends GetxController {
       Position position = await Geolocator.getCurrentPosition();
       currentPosition.value = LatLng(position.latitude, position.longitude);
 
-      // Ensure the map moves only when it's in the widget tree
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (currentPosition.value != null) {
           mapController.move(currentPosition.value!, 13.0);
@@ -68,7 +67,10 @@ class MapScreen extends StatelessWidget {
           // MAP SECTION
           Obx(() {
             if (controller.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                  child: CircularProgressIndicator(
+                color: Colors.white,
+              ));
             }
             return FlutterMap(
               mapController: controller.mapController,

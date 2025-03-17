@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:parkxpert/Views/Auth/login_screen.dart';
+import 'package:parkxpert/Views/Auth/owner_registration.dart';
 import 'package:parkxpert/Views/Auth/signup_screen.dart';
 import 'package:parkxpert/Views/Intro%20Screen/intro.dart';
 import 'package:parkxpert/Views/Owner%20Screen/owner_desition.dart';
@@ -106,6 +107,12 @@ class Approutes {
           name: RouteName.ownerDesitionScreen,
           page: () => OwnerDesition(),
           transition: Transition.leftToRight,
+          transitionDuration: Duration(seconds: 1),
+        ),
+        GetPage(
+          name: RouteName.ownerRegistration,
+          page: () => OwnerRegistration(),
+          transition: Transition.fadeIn,
           transitionDuration: Duration(seconds: 1),
         ),
       ];

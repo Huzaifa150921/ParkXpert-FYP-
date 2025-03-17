@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Import this for SystemUiOverlayStyle
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:parkxpert/Views/Loaders/owner_registration_loader.dart';
 import 'package:parkxpert/Views/Widgets/Owner%20Screen/drawer/unregister_owner_drawer.dart';
 import 'package:parkxpert/Views/Widgets/extra%20features/double_tap_exit_feature.dart';
 import 'package:parkxpert/res/routes/route_name.dart';
@@ -133,7 +135,10 @@ class OwnerDesition extends StatelessWidget {
                           SizedBox(height: screenheight * 0.03),
                           Center(
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Get.to(() => OwnerRegistrationLoader(),
+                                    transition: Transition.fade);
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.orangeAccent,
                                 shape: RoundedRectangleBorder(

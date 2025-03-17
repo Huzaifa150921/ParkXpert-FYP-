@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
@@ -50,10 +52,10 @@ class UnregisterOwnerDrawer extends StatelessWidget {
                   children: [
                     GFAvatar(
                       size: 40,
-                      backgroundImage: AssetImage(
-                        user.profilePic ??
-                            "assets/images/default_profile_pic.jfif",
-                      ),
+                      backgroundImage: (user.profilePic != null)
+                          ? MemoryImage(base64Decode(user.profilePic!))
+                          : AssetImage(
+                              "assets/images/default_profile_pic.jfif"),
                       backgroundColor: Colors.grey[800],
                     ),
                     SizedBox(width: screenwidth * 0.08),

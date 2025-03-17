@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -113,10 +114,12 @@ class ProfileScreen extends StatelessWidget {
                                       child: CircleAvatar(
                                         radius: avatarSize * 0.68,
                                         backgroundColor: Colors.white,
-                                        backgroundImage: AssetImage(
-                                          user.profilePic ??
-                                              "assets/images/default_profile_pic.jfif",
-                                        ),
+                                        backgroundImage: (user.profilePic !=
+                                                null)
+                                            ? MemoryImage(
+                                                base64Decode(user.profilePic!))
+                                            : AssetImage(
+                                                "assets/images/default_profile_pic.jfif"),
                                       ),
                                     ),
                                   ),
@@ -151,10 +154,10 @@ class ProfileScreen extends StatelessWidget {
                         child: CircleAvatar(
                           radius: avatarSize * 0.48,
                           backgroundColor: Colors.white,
-                          backgroundImage: AssetImage(
-                            user.profilePic ??
-                                "assets/images/default_profile_pic.jfif",
-                          ),
+                          backgroundImage: user.profilePic != null
+                              ? MemoryImage(base64Decode(user.profilePic!))
+                              : AssetImage(
+                                  "assets/images/default_profile_pic.jfif"),
                         ),
                       ),
                     ),
@@ -163,7 +166,7 @@ class ProfileScreen extends StatelessWidget {
                       left: screenWidth * 0.26,
                       child: GestureDetector(
                         onTap: () {
-                          userController.updateProfilePic();
+                          userController.showImageSourceDialog(context);
                         },
                         child: Icon(
                           Icons.camera_alt,

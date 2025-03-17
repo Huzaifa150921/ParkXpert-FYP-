@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:parkxpert/Controller/UserController/user_controller.dart';
+import 'package:parkxpert/Views/Loaders/logout_loader.dart';
 import 'package:parkxpert/Views/Widgets/user_screens/user_data_show.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -90,7 +91,7 @@ class SettingsScreen extends StatelessWidget {
                   Navigator.of(context).pop();
                 },
                 onConfirm: () {
-                  userController.logoutUser();
+                  Get.to(() => LogoutLoader(), transition: Transition.fade);
                 },
                 isFlip: true,
               );

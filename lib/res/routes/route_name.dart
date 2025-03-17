@@ -11,6 +11,7 @@ class RouteName {
   static const String helpScreen = "/helpScreen";
   static const String supportScreen = "/supportScreen";
   static const String rateusScreen = "/rateusScreen";
-  static const String ownerDesitionScreen = "/ownerDesitionScreen";
   static const String displayParking = "/displayParking";
+  static const String ownerDesitionScreen = "/ownerDesitionScreen";
+  static const String ownerRegistration = "/ownerRegistration";
 }

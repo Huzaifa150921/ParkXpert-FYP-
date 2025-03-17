@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:parkxpert/Models/my_user.dart';
@@ -11,8 +13,6 @@ import 'package:permission_handler/permission_handler.dart';
 class UserController extends GetxController {
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  FirebaseStorage storage = FirebaseStorage.instance;
-
   Rx<MyUser?> currentUser = Rx<MyUser?>(null);
 
   @override
@@ -25,6 +25,16 @@ class UserController extends GetxController {
   Future<bool> registerUser(String name, String email, String password,
       String phoneNumber, String role) async {
     try {
+      QuerySnapshot querySnapshot = await firestore
+          .collection('users')
+          .where('phoneNumber', isEqualTo: phoneNumber)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        Utils.snackBar("Signup Failed", "Phone number is already in use", true);
+        return false;
+      }
+
       UserCredential authUser = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
 
@@ -66,8 +76,24 @@ class UserController extends GetxController {
       );
 
       if (authUser.user != null) {
-        await loadUserData();
-        return true;
+        String uid = authUser.user!.uid;
+        DocumentSnapshot userDoc =
+            await firestore.collection('users').doc(uid).get();
+
+        if (userDoc.exists) {
+          String userRole = userDoc['role'] ?? '';
+
+          if (userRole == 'user') {
+            await loadUserData();
+            return true;
+          } else {
+            Utils.snackBar("Login Failed", "User not found!", true);
+            return false;
+          }
+        } else {
+          Utils.snackBar("Error", "User data not found.", true);
+          return false;
+        }
       }
       return false;
     } on FirebaseAuthException catch (e) {
@@ -122,6 +148,8 @@ class UserController extends GetxController {
       Utils.snackBar("Error", "Failed to update name. Please try again.", true);
     }
   }
+
+  // update Email
 
   Future<void> updateUserEmail(String newEmail) async {
     String uid = auth.currentUser?.uid ?? "";
@@ -196,96 +224,141 @@ class UserController extends GetxController {
     }
   }
 
-  // Function to Pick Image and Upload
-  Future<void> updateProfilePic() async {
-    bool hasPermission = await _requestPermissions();
-    if (!hasPermission) {
-      return;
-    }
-
-    final ImagePicker picker = ImagePicker();
-    final XFile? pickedFile =
-        await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile == null) {
-      return;
-    }
-
-    File imageFile = File(pickedFile.path);
-
-    if (!imageFile.existsSync()) {
-      return;
-    }
-
-    String uid = auth.currentUser?.uid ?? "";
-    if (uid.isEmpty) {
-      return;
-    }
-
-    String filePath = "profile_pics/$uid.jpg";
-
-    try {
-      // Upload image to Firebase Storage
-      TaskSnapshot uploadTask =
-          await storage.ref().child(filePath).putFile(imageFile);
-
-      if (uploadTask.state == TaskState.success) {
-        String downloadURL = await uploadTask.ref.getDownloadURL();
-
-        // Save URL to Firestore
-        await firestore.collection("users").doc(uid).update({
-          "profilePic": downloadURL,
-        });
-
-        // Update local user object
-        currentUser.update((user) {
-          user?.profilePic = downloadURL;
-        });
-      } else {
-        // ignore: avoid_print
-        print("Upload Failed: File upload was unsuccessful.");
-      }
-    } catch (e) {
-      // ignore: avoid_print
-      print("Upload Error: $e");
-    }
-  }
+  // Request for Permissions
 
   Future<bool> _requestPermissions() async {
     if (Platform.isAndroid) {
-      PermissionStatus cameraStatus = await Permission.camera.request();
+      PermissionStatus cameraStatus = await Permission.camera.status;
+      PermissionStatus photosStatus = await Permission.photos.status;
 
-      PermissionStatus storageStatus;
-      if (await Permission.photos.isGranted ||
-          await Permission.photos.request().isGranted) {
-        storageStatus = PermissionStatus.granted;
-      } else {
-        storageStatus = await Permission.storage.request();
+      if (!cameraStatus.isGranted) {
+        cameraStatus = await Permission.camera.request();
+      }
+      if (!photosStatus.isGranted) {
+        photosStatus = await Permission.photos.request();
       }
 
       if (cameraStatus.isPermanentlyDenied ||
-          storageStatus.isPermanentlyDenied) {
-        Utils.snackBar("Permission Required",
-            "Please enable Camera & Storage permissions in settings.", true);
-        openAppSettings(); // Redirect user to settings
+          photosStatus.isPermanentlyDenied) {
+        openAppSettings();
         return false;
       }
 
-      return cameraStatus.isGranted && storageStatus.isGranted;
+      return cameraStatus.isGranted && photosStatus.isGranted;
     } else if (Platform.isIOS) {
-      PermissionStatus photosStatus = await Permission.photos.request();
+      PermissionStatus photosStatus = await Permission.photos.status;
+
+      if (!photosStatus.isGranted) {
+        photosStatus = await Permission.photos.request();
+      }
 
       if (photosStatus.isPermanentlyDenied) {
-        Utils.snackBar("Permission Required",
-            "Please enable Photos permission in settings.", true);
-        openAppSettings(); // Redirect user to settings
+        openAppSettings();
         return false;
       }
 
       return photosStatus.isGranted;
     }
-
     return false;
+  }
+
+// show Image dialog Source
+  void showImageSourceDialog(BuildContext context) async {
+    bool hasPermission = await _requestPermissions();
+    if (!hasPermission) {
+      Utils.snackBar("Permission Denied",
+          "You need to grant permissions for camera and gallery.", true);
+      return;
+    }
+
+    showDialog(
+      // ignore: use_build_context_synchronously
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Color(0xFF121212),
+          title: Text(
+            'Choose a source',
+            style: TextStyle(color: Color(0xFFFFFFFF)),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.camera, color: Color(0xFFFFFFFF)),
+                title: Text(
+                  'Take a Photo',
+                  style: TextStyle(color: Color(0xFFFFFFFF)),
+                ),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await updateProfilePic(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.image, color: Color(0xFFFFFFFF)),
+                title: Text(
+                  'Choose from Gallery',
+                  style: TextStyle(color: Color(0xFFFFFFFF)),
+                ),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await updateProfilePic(ImageSource.gallery);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+// updating profile pic
+  Future<void> updateProfilePic(ImageSource source) async {
+    final ImagePicker picker = ImagePicker();
+    XFile? pickedFile = await picker.pickImage(source: source);
+
+    if (pickedFile == null) {
+      Utils.snackBar("Error", "No image selected.", true);
+      return;
+    }
+
+    File imageFile = File(pickedFile.path);
+    if (!imageFile.existsSync()) {
+      Utils.snackBar("Error", "Image file does not exist.", true);
+      return;
+    }
+
+    final compressedImage = await FlutterImageCompress.compressWithFile(
+      imageFile.absolute.path,
+      quality: 70,
+    );
+
+    if (compressedImage == null || compressedImage.length > 1024 * 1024) {
+      Utils.snackBar("Error", "Image size should be less than 1MB", true);
+      return;
+    }
+
+    try {
+      String base64Image = base64Encode(compressedImage);
+      String uid = FirebaseAuth.instance.currentUser?.uid ?? "";
+
+      if (uid.isNotEmpty) {
+        await FirebaseFirestore.instance.collection("users").doc(uid).update({
+          "profilePic": base64Image,
+        });
+
+        currentUser.update((user) {
+          user?.profilePic = base64Image;
+        });
+
+        Utils.snackBar("Success", "Profile picture updated.", false);
+      } else {
+        Utils.snackBar("Error", "User not authenticated.", true);
+      }
+    } catch (e) {
+      Utils.snackBar("Error", "Something went wrong. Try again!", true);
+    }
   }
 
   // Get error messages for FirebaseAuthException

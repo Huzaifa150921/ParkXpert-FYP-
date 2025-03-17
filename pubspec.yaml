@@ -69,7 +69,8 @@ dependencies:
   flutter_map: ^8.1.0
   awesome_dialog: ^3.2.1
   geocoding: ^3.0.0
-
+  flutter_image_compress: ^2.4.0
+  micro_loaders: ^0.0.5
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -97,6 +98,7 @@ flutter:
     - assets/images/Nodata.avif
     - assets/images/auth.jpg
     - assets/images/splash.png
+    - assets/credentials.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
